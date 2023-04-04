@@ -1,0 +1,5 @@
+[directories]
+output_dir = "/out"
+run_prefix = "r3un"
+imagenet_path = "/data"
+
