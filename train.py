@@ -1,4 +1,4 @@
-from model import ZooNet
+from model_v2 import ZooNet
 from torch.optim import Adam
 from torch import nn
 import torch
@@ -14,7 +14,7 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
 
     print("Initializing the optimizer and loss function")
     optimizer = Adam(model.parameters(), lr=learning_rate)
-    loss_fn = nn.NLLLoss()
+    loss_fn = nn.NLLLoss()  
     
     # Update after each epoch
     training_history = {
@@ -40,7 +40,7 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
         # Loop over training set
         for (x, y) in train_data_loader:
             (x, y) = (x.to(device), y.to(device))
-
+               
             # Forwards propagation
             prediction = model(x)
             loss = loss_fn(prediction, y)

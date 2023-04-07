@@ -1,5 +1,5 @@
 [directories]
-output_dir = "/out"
-run_prefix = "r3un"
+output_dir = ./result
+run_prefix = "run"
 imagenet_path = "/data"
 
