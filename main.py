@@ -27,7 +27,7 @@ def hyperparam_randomizer():
 
     lr_i = randint(0, 4)
     epoch_i = randint(0, 1)
-    batch_size_i = randint(0, 4)
+    batch_size_i = randint(0, 3)
 
     return lr[lr_i], batch_size[batch_size_i], epoch[epoch_i]
 
