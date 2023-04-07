@@ -86,6 +86,8 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
 
     end_time = time.time()
     print("Finished training.")
-    print(f"Training duratin: {start_time - end_time}")
+    duration = end_time - start_time
+    print(f"Training duration: {duration}")
 
     torch.save(model, './out')
+    return training_history, duration

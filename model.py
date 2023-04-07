@@ -24,6 +24,12 @@ class ZooNet(Module):
         self.relu_2 = ReLU()
         self.maxpool_2 = MaxPool2d(kernel_size=(5, 5), stride=(2, 2))
 
+        # # CONV => RELU => POOL
+        # self.conv_2 = Conv2d(
+        #     in_channels=10, out_channels=20, kernel_size=(3, 3))
+        # self.relu_2 = ReLU()
+        # self.maxpool_2 = MaxPool2d(kernel_size=(5, 5), stride=(2, 2))
+
         # FULLY CONNECTED => RELU
         self.fc_1 = Linear(in_features=15680 , out_features=500)
         self.relu_3 = ReLU()
