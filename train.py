@@ -1,4 +1,4 @@
-from model_v2 import ZooNet
+from model import ZooNet
 from torch.optim import Adam
 from torch import nn
 import torch
@@ -9,7 +9,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # TODO: add optimizer and loss_fn options to parameters
 def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int, num_channels: int=3, classes: int=1, learning_rate:float=0.01, epochs: int=10):
     print("Initializing the ZooNet Model...")
-    print("cuda" if torch.cuda.is_available() else "cpu")
+
+    cuda_or_cpu = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Currently using: {cuda_or_cpu}")
+    print(torch.version.cuda)
     model = ZooNet(num_channels, classes).to(device)
 
     print("Initializing the optimizer and loss function")
@@ -53,6 +56,10 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
             # Update loss
             train_loss += loss
             train_correct += (prediction.argmax(1) == y).type(torch.float).sum().item()
+            # print("train correct: ", train_correct)
+
+            # p = accuracy(prediction, y)
+            # print(p)
 
         # Loop over validation set
         with torch.no_grad():
@@ -91,3 +98,20 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
 
     torch.save(model, './out')
     return training_history, duration
+
+
+def accuracy(output, target, topk=(1,)):
+    """Computes the accuracy over the k top predictions for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
+
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+        res = []
+        for k in topk:
+            correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
