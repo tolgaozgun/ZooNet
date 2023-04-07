@@ -22,7 +22,7 @@ val_dir = "./data/val"
 RANDOM_TRIALS = 1
 
 def hyperparam_randomizer():
-    lr = [10e-5, 10e-4, 10e-3, 10e-2, 10e-1]
+    lr = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
     epoch = [50, 100]
     batch_size = [16, 32, 64, 128]
 
