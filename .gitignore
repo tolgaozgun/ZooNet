@@ -10,6 +10,11 @@ __pycache__/
 # C extensions
 *.so
 
+out
+out_old
+result/*
+result/
+
 data/*
 data/
 data
