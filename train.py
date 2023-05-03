@@ -7,15 +7,14 @@ import time
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # TODO: add optimizer and loss_fn options to parameters
-def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int, num_channels: int=3, classes: int=1, learning_rate:float=0.01, epochs: int=10):
+def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int, num_channels: int=3,
+            classes: int=1, learning_rate:float=0.01, epochs: int=10):
     print("Initializing the ZooNet Model...")
 
     cuda_or_cpu = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Currently using: {cuda_or_cpu}")
-    print(torch.version.cuda)
+    print(f"Currently using: {cuda_or_cpu}. Version: {torch.version.cuda}")
     model = ZooNet(num_channels, classes).to(device)
 
-    print("Initializing the optimizer and loss function")
     optimizer = Adam(model.parameters(), lr=learning_rate)
     loss_fn = nn.NLLLoss()  
     

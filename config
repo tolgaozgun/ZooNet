@@ -1,5 +1,7 @@
 [directories]
 output_dir = ./result
-run_prefix = "run"
-imagenet_path = "/data"
+run_prefix = run
+train_data_path = ./data/train
+val_data_path = ./data/val
+data_classes=59
 
