@@ -138,7 +138,7 @@ def main():
 
     # Load the dataset, and split the dataset to train, validation, and test
     print("Loading the dataset...")
-    train_data, val_data = load_dataset(train_dir, val_dir, train_subset_size=10000, val_subset_size=1000)
+    train_data, val_data = load_dataset(train_dir, val_dir)
 
     if random_trials is not None:
         # Initialize  data loaders

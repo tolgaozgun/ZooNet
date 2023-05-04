@@ -1,5 +1,4 @@
-from model import ZooNet
-from torch.optim import Adam
+from model_v3 import ZooNet
 from torch import nn
 import torch
 import time
@@ -7,16 +6,16 @@ import time
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # TODO: add optimizer and loss_fn options to parameters
-def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int, num_channels: int=3,
+def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int,
             classes: int=1, learning_rate:float=0.01, epochs: int=10):
     print("Initializing the ZooNet Model...")
 
     cuda_or_cpu = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Currently using: {cuda_or_cpu}. Version: {torch.version.cuda}")
-    model = ZooNet(num_channels, classes).to(device)
+    model = ZooNet(classes).to(device)
 
-    optimizer = Adam(model.parameters(), lr=learning_rate)
-    loss_fn = nn.NLLLoss()  
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = 0.005, momentum = 0.9)
+    loss_fn = nn.CrossEntropyLoss()  
     
     # Update after each epoch
     training_history = {
@@ -55,10 +54,6 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
             # Update loss
             train_loss += loss
             train_correct += (prediction.argmax(1) == y).type(torch.float).sum().item()
-            # print("train correct: ", train_correct)
-
-            # p = accuracy(prediction, y)
-            # print(p)
 
         # Loop over validation set
         with torch.no_grad():

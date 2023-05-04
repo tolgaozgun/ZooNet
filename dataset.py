@@ -3,22 +3,19 @@ import torch
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
-
-def normalize_transform():
-    return transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-
-
 def load_dataset(train_dir: str, val_dir: str, train_crop: int=128, val_crop: int=128,
                 train_subset_size: int=None, val_subset_size: int=None):
     print(f"Train data directory: {train_dir}. Validation data directory: {val_dir}")
+    normalize_transform = transforms.Normalize(
+        mean=[0.4914, 0.4822, 0.4465],
+        std=[0.2023, 0.1994, 0.2010],
+    )
     train_data = ImageFolder(
         train_dir,
         transforms.Compose([
-            transforms.RandomResizedCrop(train_crop),
-            transforms.RandomHorizontalFlip(),
+            transforms.Resize((227, 227)),
             transforms.ToTensor(),
-            normalize_transform()
+            normalize_transform
         ])
     )
     if train_subset_size:
@@ -27,10 +24,9 @@ def load_dataset(train_dir: str, val_dir: str, train_crop: int=128, val_crop: in
     val_data = ImageFolder(
         val_dir,
         transforms.Compose([
-            transforms.RandomResizedCrop(val_crop),
-            transforms.RandomHorizontalFlip(),
+            transforms.Resize((227, 227)),
             transforms.ToTensor(),
-            normalize_transform()
+            normalize_transform
         ])
     )
     if val_subset_size:

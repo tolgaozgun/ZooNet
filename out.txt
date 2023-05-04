@@ -1,0 +1,38 @@
+EPOCH: 1/20
+        Train loss: 2.958096504211426, Train accuracy: 0.23416208306659175
+        Validation loss: 2.5235016345977783, Validation accuracy: 0.34847457627118644
+EPOCH: 2/20
+        Train loss: 2.1064870357513428, Train accuracy: 0.42893351275786834
+        Validation loss: 2.262901782989502, Validation accuracy: 0.42677966101694914
+EPOCH: 3/20
+        Train loss: 1.7713963985443115, Train accuracy: 0.5148874459440038
+        Validation loss: 1.837833285331726, Validation accuracy: 0.515593220338983
+EPOCH: 4/20
+        Train loss: 1.5651159286499023, Train accuracy: 0.5677871990175201
+        Validation loss: 1.8346301317214966, Validation accuracy: 0.5223728813559322
+EPOCH: 5/20
+        Train loss: 1.4199552536010742, Train accuracy: 0.6081969140721966
+        Validation loss: 1.6843031644821167, Validation accuracy: 0.5705084745762712
+EPOCH: 6/20
+        Train loss: 1.3072521686553955, Train accuracy: 0.6385597261598359
+        Validation loss: 1.6321388483047485, Validation accuracy: 0.5854237288135593
+EPOCH: 7/20
+        Train loss: 1.2410545349121094, Train accuracy: 0.657621405521224
+        Validation loss: 1.4933780431747437, Validation accuracy: 0.5996610169491525
+EPOCH: 8/20
+        Train loss: 1.1856940984725952, Train accuracy: 0.6699285350335115
+        Validation loss: 1.5526597499847412, Validation accuracy: 0.6037288135593221
+EPOCH: 9/20
+        Train loss: 1.1402581930160522, Train accuracy: 0.6847310591709018
+        Validation loss: 1.484525442123413, Validation accuracy: 0.6061016949152542
+EPOCH: 10/20
+        Train loss: 0.9625687599182129, Train accuracy: 0.7295436432761526
+        Validation loss: 1.4851399660110474, Validation accuracy: 0.6152542372881356
+EPOCH: 19/20
+        Train loss: 0.9523388743400574, Train accuracy: 0.7345213676330333
+        Validation loss: 1.5142515897750854, Validation accuracy: 0.6220338983050847
+EPOCH: 20/20
+        Train loss: 0.9418535232543945, Train accuracy: 0.7350962229393397
+        Validation loss: 1.3447526693344116, Validation accuracy: 0.6450847457627119
+Finished training.
+Training duration: 12592.472870349884
