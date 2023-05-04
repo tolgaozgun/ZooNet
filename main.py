@@ -13,6 +13,7 @@ import pandas as pd
 from config import Config
 
 from train import train
+from utils import create_run_dir, hyperparam_randomizer, training_history_to_excel
 from dataset import load_dataset
 
 
@@ -20,6 +21,7 @@ from dataset import load_dataset
 LEARNING_RATE = 1e-3
 BATCH_SIZE = 64
 EPOCHS = 10
+MODEL_OUT_PATH = "./"
 
 parser = argparse.ArgumentParser(
     prog="ZooNet",
@@ -33,63 +35,14 @@ parser.add_argument("-r", "--random", help="Randomly creates hyperparameters for
 parser.add_argument("-l", "--learning-rate", help="Learning rate for the current epoch.", type=float, default=LEARNING_RATE)
 parser.add_argument("-b", "--batch-size", help="Batch size for the current epoch.", type=int, default=BATCH_SIZE)
 parser.add_argument("-e", "--epochs", help="Number of epochs for this run.", type=int, default=EPOCHS)
+parser.add_argument("-s", "--save", help="Saves the learned model parameters to the given path.", type=str, default=MODEL_OUT_PATH)
+parser.add_argument("--load-model", help="Loads the model parameters for running tests. No learning is made if this flag is true, only the test input is run.", type=str, default=None)
+parser.add_argument("-t", "--transfer-learning", help="Enables transfer learning, runs the pretrained model on a different dataset.")
 
-
-def hyperparam_randomizer():
-    lr = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
-    epoch = [50, 100]
-    batch_size = [16, 32, 64, 128]
-
-    lr_i = randint(0, len(lr) - 1)
-    epoch_i = randint(0, len(epoch) - 1)
-    batch_size_i = randint(0, len(batch_size) - 1)
-
-    return lr[lr_i], batch_size[batch_size_i], epoch[epoch_i]
-
-
-def create_run_dir(output_dir):
-    # If output_dir is None, set it to the current directory
-    if output_dir is None:
-        output_dir = os.getcwd()
-
-    # Get the list of directories in the folder that has the syntax "run_***" where *** is a number
-    # Get the latest run number
-    # Calculate the current run number by incrementing the latest run number by 1
-    # Create a directory with the name "run_***" where *** is the current run number
-    # Return the current run number
-    print("Calculating run number...")
-    run_number = 0
-    
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-
-    for file in os.listdir(output_dir):
-        if os.path.isdir(os.path.join(output_dir, file)):
-            if file.startswith("run_"):
-                # Compare the current run number with the run number in the file name
-                # If the run number in the file name is greater than the current run number, set the current run number to the run number in the file name
-                if int(file[4:]) > run_number:
-                    run_number = int(file[4:])
-
-    run_number += 1
-
-    # Set the directory name to "run_***" where *** is the current run number in 3 digits
-    main_dir = os.path.join(output_dir, f"run_{run_number:04d}")
-    os.mkdir(main_dir)
-    
-    # If subfolder is not None, create a subfolder in the run directory
-    print(f"Run number: {run_number:04d}")
-    return run_number, main_dir
-
-
-def training_history_to_excel(training_history: dict, out_path: str):
-    df = pd.DataFrame.from_dict(training_history)
-    df.to_excel(out_path)
-
-
-def run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, i=None):
+def run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, run_dir, i=None):
     print(f"Learning rate: {lr}, Batch size: {batch_size}, Total epochs: {epochs}")
     print("Initializing data loaders...")
+    print(run_dir)
     train_data_loader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
     val_data_loader = DataLoader(val_data, batch_size=batch_size) 
 
@@ -99,7 +52,7 @@ def run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, i=Non
     print(f"Size of train set: {len(train_data_loader.dataset)}")
     print(f"Size of validation set: {len(val_data_loader.dataset)}")
 
-    training_history, duration = train(train_data_loader, val_data_loader, train_steps, val_steps, 
+    training_history, duration, model = train(train_data_loader, val_data_loader, train_steps, val_steps, 
                                         classes=int(total_classes), learning_rate=lr, epochs=epochs)
 
     # Converting these to normal CPU values is important when writing to excel
@@ -119,7 +72,13 @@ def run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, i=Non
     training_history_to_excel(training_history, f"{out_path}.xlsx")
     with open(f'{out_path}.txt', mode='w') as f:
         f.write(f"Learning rate: {lr}. Number of epochs: {epochs}. Batch size: {batch_size}. Total duration: {duration} (s).\n")
+    # TODO: Draw plots
 
+    return model
+
+
+def run_test():
+    pass
 
 def main():
     args = parser.parse_args()
@@ -127,6 +86,9 @@ def main():
     lr = args.learning_rate
     batch_size = args.batch_size
     epochs = args.epochs
+    save_path = args.save
+    load_model_path = args.load_model
+    transfer_learning = args.transfer_learning
 
     print("Loading settings...")
     config = Config()
@@ -140,14 +102,23 @@ def main():
     print("Loading the dataset...")
     train_data, val_data = load_dataset(train_dir, val_dir)
 
-    if random_trials is not None:
+    if load_model_path is not None:
+        model = torch.load(load_model_path)
+        model.eval()
+
+        # TODO: Load test dataset and run the model on the test dataset
+        return
+    elif random_trials is not None:
         # Initialize  data loaders
         # Train the model
         for i in range(random_trials):
             lr, batch_size, epochs = hyperparam_randomizer()
-            run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, i=i)
+            model = run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, run_dir[1], i=i)
     else:
-        run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes)
+        model = run_epoch(train_data, val_data, lr, batch_size, epochs, total_classes, run_dir[1])
+
+    if save_path is not None:
+        torch.save(model, save_path)
 
 
 main()
