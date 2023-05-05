@@ -19,6 +19,10 @@ data/*
 data/
 data
 
+models/*
+models/
+models
+
 # Distribution / packaging
 .Python
 build/
