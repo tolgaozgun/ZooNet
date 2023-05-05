@@ -5,9 +5,8 @@ import time
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# TODO: add optimizer and loss_fn options to parameters
 def train(train_data_loader, val_data_loader, train_steps: int, validation_steps: int,
-            classes: int=1, learning_rate:float=0.01, epochs: int=10, save_weights: str=None):
+            classes: int=1, learning_rate:float=0.01, epochs: int=10):
     print("Initializing the ZooNet Model...")
 
     cuda_or_cpu = "cuda" if torch.cuda.is_available() else "cpu"
@@ -70,6 +69,7 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
                 # Calculate the number of correct predictions 
                 validation_correct += (prediction.argmax(1) == y).type(torch.float).sum().item()
 
+        # Save the results
         avg_train_loss = train_loss / train_steps
         avg_validation_loss = validation_loss / validation_steps
         train_correct_accuracy = train_correct / len(train_data_loader.dataset)
@@ -90,8 +90,6 @@ def train(train_data_loader, val_data_loader, train_steps: int, validation_steps
     duration = end_time - start_time
     print(f"Training duration: {duration}")
 
-    if save_weights is not None:
-        torch.save(model.state_dict(), save_weights)
     return training_history, duration, model
 
 

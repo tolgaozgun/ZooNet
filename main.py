@@ -18,27 +18,28 @@ from utils import create_run_dir, hyperparam_randomizer, training_history_to_exc
 from dataset import load_dataset
 
 
-# Hyperparameters
+# Hyperparameter constants
 LEARNING_RATE = 1e-3
 BATCH_SIZE = 64
 EPOCHS = 10
 MODEL_OUT_PATH = "./"
 
+# Command line args
 parser = argparse.ArgumentParser(
     prog="ZooNet",
     description="Command line interface for ZooNet.",
     epilog=""
 )
-
 parser.add_argument("-r", "--random", help="Randomly creates hyperparameters for the current run." + 
                     " If this option is selected any other flags providing a value to hyperparameters will be ignored",
                     type=int, default=None)
-parser.add_argument("-l", "--learning-rate", help="Learning rate for the current epoch.", type=float, default=LEARNING_RATE)
-parser.add_argument("-b", "--batch-size", help="Batch size for the current epoch.", type=int, default=BATCH_SIZE)
+parser.add_argument("-l", "--learning-rate", help="Learning rate for the current run.", type=float, default=LEARNING_RATE)
+parser.add_argument("-b", "--batch-size", help="Batch size for the current run.", type=int, default=BATCH_SIZE)
 parser.add_argument("-e", "--epochs", help="Number of epochs for this run.", type=int, default=EPOCHS)
 parser.add_argument("-s", "--save", help="Saves the learned model parameters to the given path.", type=str, default=MODEL_OUT_PATH)
-parser.add_argument("--load-model", help="Loads the model parameters for running tests. No learning is made if this flag is true, only the test input is run.", type=str, default=None)
-parser.add_argument("-t", "--transfer-learning", help="Enables transfer learning, runs the pretrained model on a different dataset.")
+parser.add_argument("--load-model", help="Loads the model parameters for running tests. No learning is made if this flag is true, the model is run on the test dataset.", type=str, default=None)
+parser.add_argument("-t", "--transfer-learning", help="Enables transfer learning, runs the pretrained model on thedataset.")
+
 
 def run_epoch(train_data_loader, val_data_loader, lr, batch_size, epochs, total_classes, run_dir, i=None):
     print(f"Starting current run...\n\tLearning rate: {lr}, Batch size: {batch_size}, Total epochs: {epochs}")
