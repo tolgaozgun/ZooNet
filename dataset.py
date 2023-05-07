@@ -3,8 +3,8 @@ import torch
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
-def load_dataset(train_dir: str, val_dir: str, train_crop: int=128, val_crop: int=128,
-                train_subset_size: int=None, val_subset_size: int=None):
+def load_dataset(train_dir: str, val_dir: str, test_dir: str, train_crop: int=128, val_crop: int=128,
+                train_subset_size: int=None, val_subset_size: int=None, test_subset_size: int=None):
     print(f"Train data directory: {train_dir}. Validation data directory: {val_dir}")
     normalize_transform = transforms.Normalize(
         mean=[0.4914, 0.4822, 0.4465],
@@ -31,5 +31,16 @@ def load_dataset(train_dir: str, val_dir: str, train_crop: int=128, val_crop: in
     )
     if val_subset_size:
         val_data = torch.utils.data.Subset(val_data, np.random.choice(len(val_data), val_subset_size, replace=False))
+    
+    test_data = ImageFolder(
+        test_dir,
+        transforms.Compose([
+            transforms.Resize((227, 227)),
+            transforms.ToTensor(),
+            normalize_transform
+        ])
+    ) 
+    if test_subset_size:
+        test_data = torch.utils.data.Subset(test_data, np.random.choice(len(test_data), test_subset_size, replace=False))
 
-    return train_data, val_data
+    return train_data, val_data, test_data

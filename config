@@ -3,5 +3,6 @@ output_dir = ./result
 run_prefix = run
 train_data_path = ./data/train
 val_data_path = ./data/val
+test_data_path = ./data/test/test
 data_classes=59
 

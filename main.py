@@ -74,8 +74,39 @@ def run_epoch(train_data_loader, val_data_loader, lr, batch_size, epochs, total_
     return model, training_history, duration
 
 
-def run_test():
-    pass
+def run_test(model, test_data_loader):
+    model.eval()  # Set the model to evaluation mode
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Use GPU if available
+    model = model.to(device)
+    
+    test_loss = 0.0
+    test_accuracy = 0.0
+    total_samples = 0
+
+    with torch.no_grad():
+        for batch_data, batch_labels in test_data_loader:
+            batch_data = batch_data.to(device)
+            batch_labels = batch_labels.to(device)
+
+            outputs = model(batch_data)
+            loss = compute_loss(outputs, batch_labels)  # Define your loss function here
+
+            test_loss += loss.item() * batch_data.size(0)
+            _, predicted = torch.max(outputs.data, 1)
+            test_accuracy += (predicted == batch_labels).sum().item()
+            total_samples += batch_data.size(0)
+
+    test_loss /= total_samples
+    test_accuracy /= total_samples
+
+    print(f"Test Loss: {test_loss:.4f}")
+    print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
+
+def compute_loss(outputs, labels):
+    criterion = torch.nn.CrossEntropyLoss()
+    loss = criterion(outputs, labels)
+    return loss
 
 def main():
     args = parser.parse_args()
@@ -93,15 +124,17 @@ def main():
     run_number, run_dir = create_run_dir(config.output_dir)
     train_dir = config.train_data_dir
     val_dir = config.val_data_dir
+    test_dir = config.test_data_dir
     total_classes = config.data_classes
 
     # Load the dataset, create data loaders
     print("Loading the dataset...")
-    train_data, val_data = load_dataset(train_dir, val_dir)
+    train_data, val_data, test_data = load_dataset(train_dir, val_dir, test_dir)
 
     print("Initializing data loaders...")
     train_data_loader = DataLoader(train_data, shuffle=True, batch_size=batch_size) 
     val_data_loader = DataLoader(val_data, batch_size=batch_size) 
+    test_data_loader = DataLoader(test_data, batch_size=batch_size)
 
     # Load an existing model and test it on the test data
     if load_model_path is not None:
