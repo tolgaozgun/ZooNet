@@ -2,6 +2,17 @@ import os
 
 import pandas as pd
 
+def class_name_to_real_name(fpath):
+    name_dict = {}
+
+    with open(fpath, "r") as f:
+        for line in f:
+            items = line.split()
+            name_dict[items[0]] = items[2]
+    
+    return name_dict
+
+
 def hyperparam_randomizer():
     lr = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
     epoch = [50, 100]
@@ -14,7 +25,7 @@ def hyperparam_randomizer():
     return lr[lr_i], batch_size[batch_size_i], epoch[epoch_i]
 
 
-def create_run_dir(output_dir):
+def create_run_dir(output_dir, test=False):
     # If output_dir is None, set it to the current directory
     if output_dir is None:
         output_dir = os.getcwd()
@@ -43,6 +54,13 @@ def create_run_dir(output_dir):
     # Set the directory name to "run_***" where *** is the current run number in 3 digits
     main_dir = os.path.join(output_dir, f"run_{run_number:04d}")
     os.mkdir(main_dir)
+
+    if test:
+        acc_results_dir = os.path.join(main_dir, "acc_ims")
+        inacc_results_dir = os.path.join(main_dir, "inacc_ims")
+
+        os.mkdir(acc_results_dir)
+        os.mkdir(inacc_results_dir)
     
     # If subfolder is not None, create a subfolder in the run directory
     print(f"Run number: {run_number:04d}")
